@@ -688,29 +688,33 @@ const TOPICS = [
   {
     id: 'tema1',
     number: 1,
-    title: 'Verbo To Be',
-    description: 'La base de la gramática en inglés: am, is, are.',
+    title: 'Nice to meet you',
+    description: 'Unit 1: preséntate, usa el verbo To Be y aprende países y números del 1 al 10.',
     quizzes: [
       {
-        id: 'tema1-be-afirmativo',
-        title: 'To Be afirmativo',
+        id: 'tema1-to-be',
+        title: 'To Be: afirmativo, negativo y preguntas',
         tag: 'Gramática',
         questions: [
-          { q: "I ___ a student.", options: ["am","is","are","be"], answer: 0 },
-          { q: "She ___ from Colombia.", options: ["am","is","are","be"], answer: 1 },
-          { q: "They ___ happy today.", options: ["am","is","are","be"], answer: 2 },
-          { q: "We ___ classmates.", options: ["am","is","are","be"], answer: 2 },
+          { q: "My name ___ Ana.", options: ["am","is","are","be"], answer: 1 },
+          { q: "I ___ from Mexico.", options: ["am","is","are","be"], answer: 0 },
+          { q: "___ you from Spain?", options: ["Am","Is","Are","Be"], answer: 2 },
+          { q: "She ___ a teacher.", options: ["am","is","are","be"], answer: 1 },
+          { q: "We ___ students.", options: ["am","is","are","be"], answer: 2 },
+          { q: "I ___ not from Brazil.", options: ["am","is","are","do"], answer: 0 },
         ]
       },
       {
-        id: 'tema1-be-negativo-preguntas',
-        title: 'Negativo y preguntas',
-        tag: 'Gramática',
+        id: 'tema1-vocab-presentaciones',
+        title: 'Vocabulario: presentaciones y países',
+        tag: 'Vocabulario',
         questions: [
-          { q: "I ___ not tired.", options: ["am","is","are","be"], answer: 0 },
-          { q: "He isn't ___ home.", options: ["at","in on","from","for"], answer: 0 },
-          { q: "Choose the correct question:", options: ["Is she a teacher?","She is a teacher?","Is teacher she?","She a teacher is?"], answer: 0 },
-          { q: "We ___ from Spain (negative).", options: ["am not","isn't","aren't","doesn't"], answer: 2 },
+          { q: "'Apellido' en inglés es:", options: ["First name","Last name","Address","City"], answer: 1 },
+          { q: "Para saludar formalmente durante el día dices:", options: ["Good morning","Nice to meet you","Goodbye","Excuse me"], answer: 0 },
+          { q: "¿Cuál de estas palabras es un país?", options: ["Address","Turkey","Meeting","Number"], answer: 1 },
+          { q: "'Número de teléfono' en inglés:", options: ["Phone number","Home number","Call number","Line number"], answer: 0 },
+          { q: "'¿Cómo se escribe eso?' se dice:", options: ["How do you spell that?","What's your name?","Where are you from?","Are you here on holiday?"], answer: 0 },
+          { q: "'Encantado/a de conocerte' se dice:", options: ["Thanks a lot","Nice to meet you","Have a nice day","See you later"], answer: 1 },
         ]
       }
     ],
@@ -718,58 +722,57 @@ const TOPICS = [
       {
         icon: '§',
         title: 'El verbo To Be',
-        desc: 'La forma correcta según cada pronombre.',
-        body: `<p><strong>I</strong> am · <strong>You</strong> are · <strong>He/She/It</strong> is · <strong>We/You/They</strong> are</p>
-               <ul><li>I am a student.</li><li>She is my teacher.</li><li>They are from Peru.</li></ul>`
+        desc: 'La forma correcta según cada pronombre, y cómo hacer preguntas y negaciones.',
+        body: `<p><strong>Afirmativo:</strong> I <strong>am</strong> · You/We/They <strong>are</strong> · He/She/It <strong>is</strong></p>
+               <ul><li>I am a student.</li><li>She is my teacher.</li><li>They are from Peru.</li></ul>
+               <p><strong>Negativo:</strong> agrega <em>not</em> después del verbo.</p>
+               <ul><li>I am not from Brazil.</li><li>He isn't a doctor.</li></ul>
+               <p><strong>Preguntas:</strong> invierte el orden (verbo + sujeto).</p>
+               <ul><li>Are you from Spain?</li><li>Is she a teacher?</li></ul>`
       },
       {
         icon: '¶',
-        title: 'Contracciones con To Be',
-        desc: 'Formas cortas usadas al hablar.',
+        title: 'Saludos y presentaciones',
+        desc: 'Frases esenciales para presentarte y saludar en inglés.',
         body: `<ul>
-                <li>I am → I'm</li>
-                <li>You are → You're</li>
-                <li>He is → He's</li>
-                <li>She is → She's</li>
-                <li>It is → It's</li>
-                <li>We are → We're</li>
-                <li>They are → They're</li>
+                <li>Hello / Hi – Hola</li>
+                <li>Good morning – Buenos días</li>
+                <li>Goodbye – Adiós</li>
+                <li>Nice to meet you – Encantado/a de conocerte</li>
+                <li>What's your name? – ¿Cómo te llamas?</li>
+                <li>What's your first name? / last name? – ¿Cuál es tu nombre / apellido?</li>
+                <li>Where are you from? – ¿De dónde eres?</li>
+                <li>How do you spell that? – ¿Cómo se escribe eso?</li>
+                <li>Thanks / Thank you – Gracias</li>
               </ul>`
+      },
+      {
+        icon: '¶',
+        title: 'Países y números 1–10',
+        desc: 'Vocabulario de la Unit 1: países y los primeros diez números.',
+        body: `<p><strong>Países:</strong> Australia, Brazil, China, Indonesia, Japan, Russia, Spain, Turkey, the UK, the USA.</p>
+               <p><strong>Números 1–10:</strong> one, two, three, four, five, six, seven, eight, nine, ten.</p>
+               <p>Ejemplo: <em>"I'm from Brazil."</em> · <em>"We're from Chennai, in India."</em></p>`
       }
     ],
     flashcards: [
-      { word:'I am a student.', translation:'Yo soy estudiante.', example:"I'm a student at this school." },
-      { word:'You are kind.', translation:'Tú eres amable.', example:"You're always kind to everyone." },
-      { word:'He is tall.', translation:'Él es alto.', example:"He's the tallest in the class." },
-      { word:'She is happy.', translation:'Ella está feliz.', example:"She's happy about her grade." },
-      { word:'We are ready.', translation:'Nosotros estamos listos.', example:"We're ready for the quiz." },
-      { word:'They are friends.', translation:'Ellos son amigos.', example:"They're friends since school." },
-      { word:'Is he your brother?', translation:'¿Es él tu hermano?', example:"Is he your brother or your cousin?" },
-      { word:"I am not late.", translation:'Yo no estoy tarde.', example:"Don't worry, I'm not late." },
+      { word:'Address', translation:'Dirección', example:'What is your home address?' },
+      { word:'First name', translation:'Nombre (de pila)', example:'My first name is Anna.' },
+      { word:'Last name', translation:'Apellido', example:"What's your last name?" },
+      { word:'City', translation:'Ciudad', example:'What city are you from?' },
+      { word:'Country', translation:'País', example:'What country are you from?' },
+      { word:'Phone number', translation:'Número de teléfono', example:'My phone number is 0918-143-4267.' },
+      { word:'Nice to meet you', translation:'Encantado/a de conocerte', example:'Nice to meet you, Gary. You too.' },
+      { word:'Business', translation:'Negocios', example:"I'm here on business." },
+      { word:'Holiday', translation:'Vacaciones', example:"I'm here on holiday." },
+      { word:'Study', translation:'Estudiar', example:"I'm here to study." },
     ],
     events: [
-      { date: '2026-07-28', type: 'clase', title: 'Introducción al verbo To Be', time: '6:00 pm' },
-      { date: '2026-07-29', type: 'tarea', title: 'Hoja de ejercicios: To Be', time: '11:59 pm' },
+      { date: '2026-07-28', type: 'clase', title: 'Unit 1: Nice to meet you — introducción', time: '6:00 pm' },
+      { date: '2026-07-29', type: 'tarea', title: 'Wordlist Unit 1: repasar vocabulario', time: '11:59 pm' },
       { date: '2026-07-31', type: 'clase', title: 'Práctica oral: preséntate con To Be', time: '6:00 pm' },
     ]
   },
-  {
-    id: 'tema2',
-    number: 2,
-    title: 'Present Simple',
-    description: 'Rutinas, hábitos y vocabulario del día a día.',
-    quizzes: [
-      {
-        id: 'tema2-present-simple',
-        title: 'Present Simple',
-        tag: 'Gramática',
-        questions: [
-          { q: "She ___ to school every day.", options: ["go","goes","going","gone"], answer: 1 },
-          { q: "They ___ football on Saturdays.", options: ["plays","play","playing","played"], answer: 1 },
-          { q: "Choose the correct negative: He doesn't ___ coffee.", options: ["like","likes","liking","liked"], answer: 0 },
-          { q: "___ you speak English?", options: ["Are","Do","Does","Is"], answer: 1 },
-        ]
-      },
       {
         id: 'tema2-vocab-diario',
         title: 'Vocabulario diario',
