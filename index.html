@@ -995,24 +995,18 @@ async function getUserRecordByUid(uid){
   }
 }
 
-async function getUserRecordByUsername(usernameLower){
+async function getUsernameMapping(usernameLower){
   try{
-    const snap = await db.collection('users').where('username', '==', usernameLower).limit(1).get();
-    if(snap.empty) return null;
-    const docSnap = snap.docs[0];
-    return { uid: docSnap.id, ...docSnap.data() };
+    const doc = await db.collection('usernames').doc(usernameLower).get();
+    return doc.exists ? doc.data() : null;
   }catch(e){
     return null;
   }
 }
 
 async function usernameExists(usernameLower){
-  try{
-    const snap = await db.collection('users').where('username', '==', usernameLower).limit(1).get();
-    return !snap.empty;
-  }catch(e){
-    return false;
-  }
+  const mapping = await getUsernameMapping(usernameLower);
+  return !!mapping;
 }
 
 function switchAuthTab(tab){
@@ -1040,15 +1034,20 @@ async function handleLogin(){
   }
   const usernameLower = normalizeUsername(usernameRaw);
 
-  const record = await getUserRecordByUsername(usernameLower);
-  if(!record){
+  const mapping = await getUsernameMapping(usernameLower);
+  if(!mapping){
     errorEl.textContent = 'No existe una cuenta con ese usuario.';
     return;
   }
-  const email = record.authEmail || usernameToEmail(usernameLower);
+  const email = mapping.authEmail;
 
   try{
     const cred = await auth.signInWithEmailAndPassword(email, password);
+    const record = await getUserRecordByUid(cred.user.uid);
+    if(!record){
+      errorEl.textContent = 'No se encontró tu perfil. Contacta a tu profesora.';
+      return;
+    }
     currentUser = { uid: cred.user.uid, ...record };
     enterApp();
   }catch(e){
@@ -1111,6 +1110,7 @@ async function handleRegister(){
     const cred = await auth.createUserWithEmailAndPassword(authEmail, password);
     const record = { username: usernameLower, displayName, role, email: emailRaw || null, authEmail, createdAt: Date.now() };
     await db.collection('users').doc(cred.user.uid).set(record);
+    await db.collection('usernames').doc(usernameLower).set({ authEmail, uid: cred.user.uid });
     currentUser = { uid: cred.user.uid, ...record };
     enterApp();
   }catch(e){
@@ -1134,19 +1134,19 @@ async function handleForgotPassword(){
     return;
   }
   const usernameLower = normalizeUsername(usernameRaw);
-  const record = await getUserRecordByUsername(usernameLower);
-  if(!record){
+  const mapping = await getUsernameMapping(usernameLower);
+  if(!mapping){
     errorEl.textContent = 'No existe una cuenta con ese usuario.';
     return;
   }
-  if(!record.email){
+  if(mapping.authEmail.endsWith(FAKE_EMAIL_DOMAIN)){
     errorEl.textContent = 'Esta cuenta no tiene correo registrado. Pide a tu profesora que te ayude a restablecer la contraseña.';
     return;
   }
   try{
-    await auth.sendPasswordResetEmail(record.email);
+    await auth.sendPasswordResetEmail(mapping.authEmail);
     errorEl.style.color = 'var(--blue)';
-    errorEl.textContent = 'Te enviamos un correo a ' + record.email + ' para restablecer tu contraseña.';
+    errorEl.textContent = 'Te enviamos un correo a ' + mapping.authEmail + ' para restablecer tu contraseña.';
   }catch(e){
     errorEl.textContent = 'No se pudo enviar el correo. Intenta de nuevo más tarde.';
     console.error(e);
@@ -1254,6 +1254,18 @@ function showView(name){
     activeTopicId = null;
     refreshHome();
   }
+}
+
+/* ---------------- Topic helpers ---------------- */
+function getTopic(id){ return TOPICS.find(t => t.id === id); }
+
+function isTopicComplete(topic, progress){
+  return topic.quizzes.every(q => progress.completed.includes(q.id));
+}
+
+function isTopicUnlocked(index, progress){
+  if(index === 0) return true;
+  return isTopicComplete(TOPICS[index - 1], progress);
 }
 
 /* ---------------- Home / roadmap ---------------- */
