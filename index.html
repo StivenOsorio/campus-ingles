@@ -562,7 +562,6 @@
     <div id="sidebar-mode-student">
       <ul class="side-nav">
         <li><button data-view="home" class="active" onclick="showView('home')"><span class="dot"></span>Inicio</button></li>
-        <li><button data-view="syllabus" onclick="showView('syllabus')"><span class="dot"></span>Syllabus</button></li>
       </ul>
       <div class="side-topics" id="side-topics"></div>
 
@@ -604,25 +603,6 @@
           <div id="topics-roadmap"></div>
         </div>
 
-        <!-- SYLLABUS -->
-        <div class="view" id="view-syllabus">
-          <p class="eyebrow" style="text-align:center; display:block; margin-bottom:6px;">Programa del curso</p>
-          <h2 class="page-title">Syllabus — Navigate A1</h2>
-          <p class="page-sub" style="margin-bottom:20px;">Las 10 unidades del libro, con su gramática y vocabulario</p>
-          <div class="ornament"><span class="line"></span><span class="diamond"></span><span class="line"></span></div>
-
-          <div class="card" style="margin-bottom:24px;">
-            <h3 style="margin-top:0;">Documentos completos</h3>
-            <p style="color:var(--ink-soft); font-size:0.9rem; margin-top:0;">Descarga el desglose CEFR completo y el índice oficial del libro.</p>
-            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:14px;">
-              <a class="btn blue" href="navigate_cefr_mapping_a1_full.pdf" target="_blank" rel="noopener" style="text-decoration:none;">📄 CEFR Mapping (PDF)</a>
-              <a class="btn gold" href="Syllabus.pdf" target="_blank" rel="noopener" style="text-decoration:none;">📄 Índice del libro (PDF)</a>
-            </div>
-          </div>
-
-          <div id="syllabus-units"></div>
-        </div>
-
         <!-- TOPIC DETAIL -->
         <div class="view" id="view-topic">
           <button class="btn ghost small" style="margin-bottom:22px;" onclick="showView('home')">← Volver a temas</button>
@@ -638,6 +618,7 @@
             <button data-sub="materials" onclick="showTopicSub('materials')">Materiales</button>
             <button data-sub="study" onclick="showTopicSub('study')">Estudiar</button>
             <button data-sub="calendar" onclick="showTopicSub('calendar')">Calendario</button>
+            <button data-sub="syllabus" onclick="showTopicSub('syllabus')">Syllabus</button>
           </nav>
 
           <div class="subview active" id="sub-quizzes">
@@ -690,6 +671,19 @@
               <p style="color:var(--ink-soft); margin-top:0; font-size:0.9rem;">Clases y entregas de este tema</p>
               <div id="topic-alerts-list"></div>
             </div>
+          </div>
+
+          <div class="subview" id="sub-syllabus">
+            <div class="card" style="margin-bottom:24px;">
+              <h3 style="margin-top:0;">Documentos completos</h3>
+              <p style="color:var(--ink-soft); font-size:0.9rem; margin-top:0;">Descarga el desglose CEFR completo y el índice oficial del libro.</p>
+              <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:14px;">
+                <a class="btn blue" href="navigate_cefr_mapping_a1_full.pdf" target="_blank" rel="noopener" style="text-decoration:none;">📄 CEFR Mapping (PDF)</a>
+                <a class="btn gold" href="Syllabus.pdf" target="_blank" rel="noopener" style="text-decoration:none;">📄 Índice del libro (PDF)</a>
+              </div>
+            </div>
+            <h3 style="margin: 0 0 14px;">Programa completo — Navigate A1</h3>
+            <div id="syllabus-units"></div>
           </div>
         </div>
 
@@ -1260,7 +1254,6 @@ function enterApp(){
   document.getElementById('name-gate-screen').classList.add('hidden');
   document.getElementById('campus').classList.remove('hidden');
   document.getElementById('welcome-msg').textContent = currentUser.displayName;
-  renderSyllabus();
 
   if(currentUser.role === 'admin'){
     document.getElementById('sidebar-role-label').textContent = 'Administrador';
@@ -1466,6 +1459,7 @@ async function openTopic(topicId){
   topicCalViewDate.setDate(1);
   renderTopicCalendar();
   renderTopicAlerts();
+  renderSyllabus();
 
   renderSidebarTopics(progress);
 }
