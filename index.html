@@ -465,6 +465,20 @@
   .admin-topic-chip.done{ background: var(--gold-pale); border-color: var(--gold); color: var(--wine-dark); font-weight:600; }
   .admin-empty{ text-align:center; color: var(--ink-soft); padding: 30px 0; font-style:italic; font-family:'Cormorant Garamond', serif; }
 
+  /* ---------- Syllabus ---------- */
+  .unit-card{
+    background: var(--paper); border-radius: 5px; padding: 18px 22px; margin-bottom:10px;
+    border: 1px solid var(--line); display:flex; gap:16px; align-items:flex-start; position:relative; overflow:hidden;
+  }
+  .unit-card::before{ content:""; position:absolute; top:0; left:0; bottom:0; width:3px; background: linear-gradient(180deg, var(--wine), var(--gold), var(--blue)); }
+  .unit-num-badge{
+    width:38px; height:38px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+    background: var(--cream); border: 1px solid var(--line); font-family:'Cormorant Garamond', serif; font-weight:700; color: var(--ink-soft);
+  }
+  .unit-card h4{margin:0 0 6px; font-size:1.1rem; font-family:'Cormorant Garamond', serif; color: var(--ink);}
+  .unit-card .unit-meta{font-size:0.85rem; color: var(--ink-soft); line-height:1.6;}
+  .unit-card .unit-meta strong{color: var(--ink);}
+
   @media (max-width:880px){
     body{display:block;}
     #campus{display:block;}
@@ -548,6 +562,7 @@
     <div id="sidebar-mode-student">
       <ul class="side-nav">
         <li><button data-view="home" class="active" onclick="showView('home')"><span class="dot"></span>Inicio</button></li>
+        <li><button data-view="syllabus" onclick="showView('syllabus')"><span class="dot"></span>Syllabus</button></li>
       </ul>
       <div class="side-topics" id="side-topics"></div>
 
@@ -587,6 +602,25 @@
           <h3 style="margin: 32px 0 6px; text-align:center;">Tu recorrido</h3>
           <p class="page-sub" style="margin-bottom:24px;">Completa cada tema para desbloquear el siguiente</p>
           <div id="topics-roadmap"></div>
+        </div>
+
+        <!-- SYLLABUS -->
+        <div class="view" id="view-syllabus">
+          <p class="eyebrow" style="text-align:center; display:block; margin-bottom:6px;">Programa del curso</p>
+          <h2 class="page-title">Syllabus — Navigate A1</h2>
+          <p class="page-sub" style="margin-bottom:20px;">Las 10 unidades del libro, con su gramática y vocabulario</p>
+          <div class="ornament"><span class="line"></span><span class="diamond"></span><span class="line"></span></div>
+
+          <div class="card" style="margin-bottom:24px;">
+            <h3 style="margin-top:0;">Documentos completos</h3>
+            <p style="color:var(--ink-soft); font-size:0.9rem; margin-top:0;">Descarga el desglose CEFR completo y el índice oficial del libro.</p>
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:14px;">
+              <a class="btn blue" href="navigate_cefr_mapping_a1_full.pdf" target="_blank" rel="noopener" style="text-decoration:none;">📄 CEFR Mapping (PDF)</a>
+              <a class="btn gold" href="Syllabus.pdf" target="_blank" rel="noopener" style="text-decoration:none;">📄 Índice del libro (PDF)</a>
+            </div>
+          </div>
+
+          <div id="syllabus-units"></div>
         </div>
 
         <!-- TOPIC DETAIL -->
@@ -902,6 +936,19 @@ const TOPICS = [
   },
 ];
 
+const SYLLABUS_UNITS = [
+  { num: 1, title: 'First meetings', grammar: 'Verb be (I/you, we/you) · Question words', vocab: 'Introductions · Numbers 1–10 · Countries · The alphabet' },
+  { num: 2, title: 'Questions', grammar: 'this/that/these/those · Verb be (it/they, he/she/it/they) · Subject pronouns', vocab: 'Objects · Numbers 11–100 · Jobs · Prepositions of place' },
+  { num: 3, title: 'People and possessions', grammar: 'have got / has got · Possessive determiners y possessive \'s', vocab: 'Adjective + noun phrases · Irregular plurals · Opposite adjectives · Family' },
+  { num: 4, title: 'My life', grammar: 'Present simple (positivo, negativo, preguntas sí/no)', vocab: 'Common verbs · Transport · Daily activities' },
+  { num: 5, title: 'Style and design', grammar: 'Adverbs of frequency · Wh- questions · Present simple (todas las formas)', vocab: 'Colours and clothes · Adjectives · Parts of the body' },
+  { num: 6, title: 'Places and facilities', grammar: 'there is/there are · Is there…?/Are there…? · each y all the', vocab: 'Places in a town · Hotel facilities · Rooms and furniture' },
+  { num: 7, title: 'Skills and interests', grammar: 'can/can\'t · Can you…? · like + -ing', vocab: 'Skills · Abilities · Adverbs of manner · Hobbies' },
+  { num: 8, title: 'Our past', grammar: 'Verb be en pasado · Past simple (verbos regulares) · Object pronouns', vocab: 'Dates · was born/died · Past time expressions' },
+  { num: 9, title: 'Unusual stories', grammar: 'Past simple (verbos irregulares, negativos y preguntas) · ago', vocab: 'Adjective + noun phrases · Verb phrases · Words from context' },
+  { num: 10, title: 'New places, new projects', grammar: 'going to (positivo, negativo, preguntas) · would like', vocab: 'Future time expressions · Verb phrases · Café food' },
+];
+
 const TIPS = [
   "Habla en voz alta aunque estés solo/a: tu boca necesita practicar los sonidos.",
   "Ve un video corto en inglés y escríbelo sin pausar, luego revisa.",
@@ -1190,10 +1237,30 @@ function handleLogout(){
   document.getElementById('name-gate-screen').classList.remove('hidden');
 }
 
+function renderSyllabus(){
+  const wrap = document.getElementById('syllabus-units');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  SYLLABUS_UNITS.forEach(u => {
+    const card = document.createElement('div');
+    card.className = 'unit-card';
+    card.innerHTML = `
+      <div class="unit-num-badge">${u.num}</div>
+      <div>
+        <h4>Unit ${u.num}: ${u.title}</h4>
+        <p class="unit-meta"><strong>Gramática:</strong> ${u.grammar}</p>
+        <p class="unit-meta"><strong>Vocabulario:</strong> ${u.vocab}</p>
+      </div>
+    `;
+    wrap.appendChild(card);
+  });
+}
+
 function enterApp(){
   document.getElementById('name-gate-screen').classList.add('hidden');
   document.getElementById('campus').classList.remove('hidden');
   document.getElementById('welcome-msg').textContent = currentUser.displayName;
+  renderSyllabus();
 
   if(currentUser.role === 'admin'){
     document.getElementById('sidebar-role-label').textContent = 'Administrador';
