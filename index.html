@@ -382,6 +382,11 @@
   }
   .flash-front{background: linear-gradient(155deg, #f3e2e7, #e4ecf3);}
   .flash-front p{color: var(--ink-soft); font-style:italic; font-family:'Cormorant Garamond',serif;}
+  .flash-pron{
+    color: var(--wine); font-style:normal !important; font-family:'Source Sans 3',sans-serif !important;
+    font-size:0.95rem !important; font-weight:600; letter-spacing:0.3px; margin-bottom:10px !important;
+  }
+  .flash-pron::before{content:"🗣 "; opacity:0.7;}
   .flash-back{background: linear-gradient(155deg, #e4ecf3, var(--gold-pale)); transform: rotateY(180deg);}
   .flash-face h2{margin:0 0 10px; font-size:1.8rem;}
   .flash-face p{margin:0; font-size:0.92rem; color:var(--ink-soft);}
@@ -636,6 +641,7 @@
                 <div class="flash-face flash-front">
                   <button class="speak-btn" onclick="event.stopPropagation(); speakTopicWord();" aria-label="Escuchar pronunciación" title="Escuchar pronunciación">🔊</button>
                   <h2 id="topic-flash-word">word</h2>
+                  <p class="flash-pron" id="topic-flash-pron"></p>
                   <p>toca para voltear</p>
                 </div>
                 <div class="flash-face flash-back">
@@ -784,16 +790,72 @@ const TOPICS = [
       }
     ],
     flashcards: [
-      { word:'Address', translation:'Dirección', example:'What is your home address?' },
-      { word:'First name', translation:'Nombre (de pila)', example:'My first name is Anna.' },
-      { word:'Last name', translation:'Apellido', example:"What's your last name?" },
-      { word:'City', translation:'Ciudad', example:'What city are you from?' },
-      { word:'Country', translation:'País', example:'What country are you from?' },
-      { word:'Phone number', translation:'Número de teléfono', example:'My phone number is 0918-143-4267.' },
-      { word:'Nice to meet you', translation:'Encantado/a de conocerte', example:'Nice to meet you, Gary. You too.' },
-      { word:'Business', translation:'Negocios', example:"I'm here on business." },
-      { word:'Holiday', translation:'Vacaciones', example:"I'm here on holiday." },
-      { word:'Study', translation:'Estudiar', example:"I'm here to study." },
+      { word:'Address', pron:'a-DRÉS', translation:'Dirección', example:'What is your home address?' },
+      { word:'First name', pron:'FERST néim', translation:'Nombre (de pila)', example:'My first name is Anna.' },
+      { word:'Last name', pron:'LAST néim', translation:'Apellido', example:"What's your last name?" },
+      { word:'City', pron:'SI-ti', translation:'Ciudad', example:'What city are you from?' },
+      { word:'Country', pron:'CÁN-tri', translation:'País', example:'What country are you from?' },
+      { word:'Phone number', pron:'FÓUN NÁM-ber', translation:'Número de teléfono', example:'My phone number is 0918-143-4267.' },
+      { word:'Nice to meet you', pron:'náis tu MIT iu', translation:'Encantado/a de conocerte', example:'Nice to meet you, Gary. You too.' },
+      { word:'Business', pron:'BÍZ-nes', translation:'Negocios', example:"I'm here on business." },
+      { word:'Holiday', pron:'JÓ-la-dei', translation:'Vacaciones', example:"I'm here on holiday." },
+      { word:'Study', pron:'STÁ-di', translation:'Estudiar', example:"I'm here to study." },
+      { word:'Alphabet', pron:'ÁL-fa-bet', translation:'Alfabeto', example:'The English alphabet has twenty-six letters.' },
+      { word:'Am', pron:'am', translation:'Soy / Estoy (con I)', example:'I am here on holiday.' },
+      { word:'Are', pron:'ar', translation:'Eres/Son/Estás (con you/we/they)', example:'Are you here to study?' },
+      { word:'Be', pron:'bi', translation:'Ser / Estar', example:'I want to be a doctor.' },
+      { word:'Day', pron:'déi', translation:'Día', example:'Have a nice day.' },
+      { word:'Fine', pron:'fáin', translation:'Bien', example:"I'm fine, thanks." },
+      { word:'From', pron:'from', translation:'De / Desde', example:"I'm from Bhutan." },
+      { word:'Good morning', pron:'gud MÓR-ning', translation:'Buenos días', example:'Good morning. How are you?' },
+      { word:'Goodbye', pron:'gud-BÁI', translation:'Adiós', example:"'See you later.' 'Goodbye.'" },
+      { word:'Great', pron:'gréit', translation:'Genial / Estupendo', example:'New York is a great city!' },
+      { word:'Hello', pron:'je-LÓU', translation:'Hola', example:"Hello, I'm Alisa." },
+      { word:'Here', pron:'jíar', translation:'Aquí', example:'Are you here on business?' },
+      { word:'Hi', pron:'jái', translation:'Hola (informal)', example:"Hi, I'm Paul." },
+      { word:'Hotel', pron:'jou-TÉL', translation:'Hotel', example:'We are in a hotel in Granada.' },
+      { word:'How', pron:'jáu', translation:'Cómo', example:'How do you spell that?' },
+      { word:'I', pron:'ái', translation:'Yo', example:"I'm from Brazil." },
+      { word:'In', pron:'in', translation:'En', example:"We're from Chennai in India." },
+      { word:'Introduce', pron:'in-tro-DIÚS', translation:'Presentar (a alguien)', example:'Henry, let me introduce you to Lena.' },
+      { word:'Is', pron:'is', translation:'Es / Está (con he/she/it)', example:'My address is 909 Cameron Road.' },
+      { word:'Letter', pron:'LÉ-ter', translation:'Letra / Carta', example:'There are five letters in my first name.' },
+      { word:'Map', pron:'map', translation:'Mapa', example:'This is a map of the world.' },
+      { word:'Meeting', pron:'MÍ-ting', translation:'Reunión', example:"What time's the meeting?" },
+      { word:'Name', pron:'néim', translation:'Nombre', example:"What's your name?" },
+      { word:'No', pron:'nóu', translation:'No', example:"'Are you American?' 'No, I'm not.'" },
+      { word:'Number', pron:'NÁM-ber', translation:'Número', example:'I think number 1 is China.' },
+      { word:'On', pron:'on', translation:'En (encima de / de vacaciones, etc.)', example:'Are you on holiday?' },
+      { word:'Right', pron:'ráit', translation:'Correcto', example:"That's right." },
+      { word:'Spell', pron:'spel', translation:'Deletrear', example:'How do you spell your name?' },
+      { word:'Thanks', pron:'zenks', translation:'Gracias', example:"'Have a nice day.' 'Thanks.'" },
+      { word:'That', pron:'dat', translation:'Eso / Ese', example:'How do you spell that?' },
+      { word:'Too', pron:'tu', translation:'También', example:"'Nice to meet you, Gary.' 'You too.'" },
+      { word:'What', pron:'uát', translation:'Qué', example:"What's your first name?" },
+      { word:'Where', pron:'uér', translation:'Dónde', example:'Where are you from?' },
+      { word:'Yes', pron:'iés', translation:'Sí', example:"'Are you from the UK?' 'Yes, I am.'" },
+      { word:'You', pron:'iú', translation:'Tú / Usted', example:'Hello. Are you Angela?' },
+      { word:'Your', pron:'iór', translation:'Tu / Su (de ti/usted)', example:"What's your email address?" },
+      { word:'One', pron:'uán', translation:'Uno (1)', example:'Number one.' },
+      { word:'Two', pron:'tu', translation:'Dos (2)', example:'Number two.' },
+      { word:'Three', pron:'zri', translation:'Tres (3)', example:'Number three.' },
+      { word:'Four', pron:'for', translation:'Cuatro (4)', example:'Number four.' },
+      { word:'Five', pron:'fáiv', translation:'Cinco (5)', example:'Number five.' },
+      { word:'Six', pron:'six', translation:'Seis (6)', example:'Number six.' },
+      { word:'Seven', pron:'SÉ-ven', translation:'Siete (7)', example:'Number seven.' },
+      { word:'Eight', pron:'éit', translation:'Ocho (8)', example:'Number eight.' },
+      { word:'Nine', pron:'náin', translation:'Nueve (9)', example:'Number nine.' },
+      { word:'Ten', pron:'ten', translation:'Diez (10)', example:'Number ten.' },
+      { word:'Australia', pron:'os-TRÉI-lia', translation:'Australia', example:"I'm from Australia." },
+      { word:'Brazil', pron:'bra-SÍL', translation:'Brasil', example:"I'm from Brazil." },
+      { word:'China', pron:'CHÁI-na', translation:'China', example:"I'm from China." },
+      { word:'Indonesia', pron:'in-do-NÍ-sha', translation:'Indonesia', example:"I'm from Indonesia." },
+      { word:'Japan', pron:'lla-PÁN', translation:'Japón', example:"I'm from Japan." },
+      { word:'Russia', pron:'RÁ-sha', translation:'Rusia', example:"I'm from Russia." },
+      { word:'Spain', pron:'spéin', translation:'España', example:"I'm from Spain." },
+      { word:'Turkey', pron:'TÉR-ki', translation:'Turquía', example:"I'm from Turkey." },
+      { word:'The UK', pron:'de iu-KÉI', translation:'El Reino Unido', example:"I'm from the UK." },
+      { word:'The USA', pron:'de iu-es-ÉI', translation:'Los Estados Unidos', example:"I'm from the USA." },
     ],
     events: [
       { date: '2026-07-28', type: 'clase', title: 'Unit 1: First meetings — introducción', time: '6:00 pm' },
@@ -1633,6 +1695,7 @@ function renderTopicFlashcard(){
   const topic = getTopic(activeTopicId);
   const card = topic.flashcards[topicFlashIndex];
   document.getElementById('topic-flash-word').textContent = card.word;
+  document.getElementById('topic-flash-pron').textContent = card.pron ? '[' + card.pron + ']' : '';
   document.getElementById('topic-flash-translation').textContent = card.translation;
   document.getElementById('topic-flash-example').textContent = card.example;
   document.getElementById('topic-flash-counter').textContent = (topicFlashIndex+1) + ' / ' + topic.flashcards.length;
