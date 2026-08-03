@@ -580,6 +580,7 @@
     <div id="sidebar-mode-admin" class="hidden">
       <ul class="side-nav">
         <li><button data-view="admin" class="active" onclick="showView('admin')"><span class="dot"></span>Estudiantes</button></li>
+        <li><button data-view="admin-submissions" onclick="showView('admin-submissions')"><span class="dot"></span>Actividades</button></li>
       </ul>
     </div>
 
@@ -727,6 +728,23 @@
             <button class="btn ghost small" onclick="renderAdminDashboard()">↻ Actualizar</button>
           </div>
           <div id="admin-roster"></div>
+        </div>
+
+        <!-- ADMIN SUBMISSIONS / REVIEW -->
+        <div class="view" id="view-admin-submissions">
+          <p class="eyebrow" style="text-align:center; display:block; margin-bottom:6px;">Panel de administrador</p>
+          <h2 class="page-title">Actividades</h2>
+          <div class="ornament"><span class="line"></span><span class="diamond"></span><span class="line"></span></div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+            <select id="submissions-filter" onchange="renderAdminSubmissions(this.value)" style="padding:9px 14px; border-radius:8px; border:1px solid var(--line); font-family:'Source Sans 3',sans-serif; background:var(--paper); color:var(--ink);">
+              <option value="pending" selected>⏳ Pendientes de revisión</option>
+              <option value="reviewed">✓ Ya revisadas</option>
+              <option value="all">Todas las actividades</option>
+            </select>
+            <button class="btn ghost small" onclick="renderAdminSubmissions()">↻ Actualizar</button>
+          </div>
+          <div id="admin-submissions-list"></div>
         </div>
 
       </div>
@@ -1409,6 +1427,94 @@ async function renderAdminDashboard(){
   }
 }
 
+/* ---------------- Admin: review student submissions ---------------- */
+async function renderAdminSubmissions(filterArg){
+  const filterSelect = document.getElementById('submissions-filter');
+  const filter = filterArg || (filterSelect ? filterSelect.value : 'pending');
+  if(filterSelect) filterSelect.value = filter;
+
+  const wrap = document.getElementById('admin-submissions-list');
+  wrap.innerHTML = '<p class="admin-empty">Cargando actividades...</p>';
+
+  let docs = [];
+  try{
+    const snap = await db.collection('submissions').orderBy('uploadedAt', 'desc').get();
+    snap.forEach(doc => docs.push({ id: doc.id, ...doc.data() }));
+  }catch(e){
+    console.error(e);
+    wrap.innerHTML = '<p class="admin-empty">No se pudo cargar la lista de actividades.</p>';
+    return;
+  }
+
+  if(filter === 'pending') docs = docs.filter(d => !d.reviewed);
+  if(filter === 'reviewed') docs = docs.filter(d => d.reviewed);
+
+  if(docs.length === 0){
+    wrap.innerHTML = `<p class="admin-empty">${filter === 'pending' ? 'No hay actividades pendientes por revisar. 🎉' : 'No hay actividades para mostrar.'}</p>`;
+    return;
+  }
+
+  wrap.innerHTML = '';
+  docs.forEach(sub => {
+    const uploadDate = new Date(sub.uploadedAt).toLocaleString('es-CO', {dateStyle:'medium', timeStyle:'short'});
+    const card = document.createElement('div');
+    card.className = 'admin-card';
+    card.innerHTML = `
+      <div class="admin-card-head">
+        <div>
+          <h3>${sub.studentName}</h3>
+          <span class="username-tag">@${sub.username} · ${sub.topicTitle}</span>
+        </div>
+        <span class="topic-status ${sub.reviewed ? 'done-text' : 'progress-text'}">${sub.reviewed ? '✓ Revisado' : '⏳ Pendiente'}</span>
+      </div>
+
+      <div style="margin-top:14px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <a href="data:application/pdf;base64,${sub.fileData}" download="${sub.fileName}" class="btn ghost small" style="text-decoration:none;">📄 ${sub.fileName}</a>
+        <span style="font-size:0.78rem; color:var(--ink-soft);">Subido el ${uploadDate}</span>
+      </div>
+
+      <div style="margin-top:16px; display:grid; grid-template-columns: 110px 1fr; gap:10px 12px; align-items:start;">
+        <label style="font-size:0.85rem; padding-top:8px;">Nota</label>
+        <input type="text" id="grade-${sub.id}" value="${sub.grade !== null && sub.grade !== undefined ? sub.grade : ''}" placeholder="ej. 4.5" style="padding:8px 10px; border-radius:8px; border:1px solid var(--line); font-family:inherit; max-width:140px;">
+
+        <label style="font-size:0.85rem; padding-top:8px;">Comentario</label>
+        <textarea id="note-${sub.id}" rows="2" placeholder="Comentario para el estudiante (opcional)" style="padding:8px 10px; border-radius:8px; border:1px solid var(--line); font-family:inherit; resize:vertical;">${sub.teacherNote || ''}</textarea>
+      </div>
+
+      <div style="margin-top:14px; display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
+        <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; cursor:pointer;">
+          <input type="checkbox" id="reviewed-${sub.id}" ${sub.reviewed ? 'checked' : ''}> Marcar como revisado
+        </label>
+        <button class="btn gold small" onclick="saveSubmissionReview('${sub.id}')">Guardar</button>
+        <span id="save-status-${sub.id}" style="font-size:0.78rem; color:var(--ink-soft);"></span>
+      </div>
+    `;
+    wrap.appendChild(card);
+  });
+}
+
+async function saveSubmissionReview(subId){
+  const statusEl = document.getElementById('save-status-' + subId);
+  const gradeVal = document.getElementById('grade-' + subId).value.trim();
+  const noteVal = document.getElementById('note-' + subId).value.trim();
+  const reviewedVal = document.getElementById('reviewed-' + subId).checked;
+
+  statusEl.textContent = 'Guardando...';
+  try{
+    await db.collection('submissions').doc(subId).update({
+      reviewed: reviewedVal,
+      grade: gradeVal === '' ? null : gradeVal,
+      teacherNote: noteVal,
+      reviewedAt: reviewedVal ? Date.now() : null,
+    });
+    statusEl.textContent = '✓ Guardado';
+    setTimeout(() => { if(statusEl) statusEl.textContent = ''; }, 2500);
+  }catch(e){
+    console.error(e);
+    statusEl.textContent = '⚠ Error al guardar.';
+  }
+}
+
 /* ---------------- Navigation ---------------- */
 function showView(name){
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -1419,6 +1525,9 @@ function showView(name){
   if(name === 'home'){
     activeTopicId = null;
     refreshHome();
+  }
+  if(name === 'admin-submissions'){
+    renderAdminSubmissions();
   }
 }
 
