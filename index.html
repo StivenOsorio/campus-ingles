@@ -669,6 +669,17 @@
                 Tu navegador no soporta audio HTML5. <a href="Unit_1_Audio_1_7.mp3">Descarga el audio aquí</a>.
               </audio>
             </div>
+
+            <div class="card" id="submission-card" style="margin-top:20px; max-width:520px; margin-left:auto; margin-right:auto;">
+              <h3 style="margin-top:0;">📤 Sube tu actividad</h3>
+              <p style="color:var(--ink-soft); font-size:0.9rem; margin-top:0;">Sube el PDF con tus respuestas del Activity #1 para que la profesora lo revise y te dé una nota.</p>
+
+              <div id="submission-status"></div>
+
+              <input type="file" id="submission-file-input" accept="application/pdf" style="display:none;" onchange="handleSubmissionFileSelected(event)">
+              <button class="btn gold" id="submission-upload-btn" onclick="document.getElementById('submission-file-input').click()" style="margin-top:10px;">📎 Elegir archivo PDF</button>
+              <div id="submission-upload-progress" class="hidden" style="margin-top:10px; font-size:0.85rem; color:var(--ink-soft);"></div>
+            </div>
           </div>
 
           <div class="subview" id="sub-calendar">
@@ -1530,6 +1541,7 @@ async function openTopic(topicId){
   renderTopicMaterials();
   topicFlashIndex = 0;
   renderTopicFlashcard();
+  renderSubmissionStatus();
   topicCalViewDate = new Date();
   topicCalViewDate.setDate(1);
   renderTopicCalendar();
@@ -1544,6 +1556,115 @@ function showTopicSub(name){
   document.getElementById('sub-' + name).classList.add('active');
   document.querySelectorAll('.subnav button').forEach(b => b.classList.remove('active'));
   document.querySelector(`.subnav button[data-sub="${name}"]`).classList.add('active');
+}
+
+/* ---------------- Student PDF submissions ---------------- */
+let currentSubmission = null;
+
+function submissionDocId(){
+  return currentUser.uid + '_' + activeTopicId;
+}
+
+async function renderSubmissionStatus(){
+  const statusEl = document.getElementById('submission-status');
+  const btn = document.getElementById('submission-upload-btn');
+  if(!statusEl || !currentUser || !activeTopicId) return;
+
+  statusEl.innerHTML = '<p style="color:var(--ink-soft); font-style:italic; font-size:0.85rem;">Cargando...</p>';
+  try{
+    const doc = await db.collection('submissions').doc(submissionDocId()).get();
+    if(doc.exists){
+      currentSubmission = doc.data();
+      const uploadDate = new Date(currentSubmission.uploadedAt).toLocaleString('es-CO', {dateStyle:'medium', timeStyle:'short'});
+
+      let reviewHtml = '';
+      if(currentSubmission.reviewed){
+        reviewHtml = `
+          <div style="margin-top:12px; padding:12px; border-radius:10px; background:var(--gold-pale); border:1px solid var(--gold);">
+            <strong style="color:var(--wine-dark);">✓ Revisado por la profesora</strong>
+            ${currentSubmission.grade !== null && currentSubmission.grade !== undefined && currentSubmission.grade !== '' ? `<div style="margin-top:4px;">Nota: <strong>${currentSubmission.grade}</strong></div>` : ''}
+            ${currentSubmission.teacherNote ? `<div style="margin-top:4px; font-style:italic; color:var(--ink-soft);">"${currentSubmission.teacherNote}"</div>` : ''}
+          </div>`;
+      } else {
+        reviewHtml = `<div style="margin-top:12px; font-size:0.85rem; color:var(--ink-soft);">⏳ Pendiente de revisión</div>`;
+      }
+
+      statusEl.innerHTML = `
+        <div style="padding:12px; border-radius:10px; background:var(--cream); border:1px solid var(--gold-pale);">
+          <div>📄 <strong>${currentSubmission.fileName}</strong></div>
+          <div style="font-size:0.8rem; color:var(--ink-soft); margin-top:2px;">Subido el ${uploadDate}</div>
+          <a href="data:application/pdf;base64,${currentSubmission.fileData}" download="${currentSubmission.fileName}" class="btn ghost small" style="margin-top:8px; display:inline-block; text-decoration:none;">⬇ Ver / descargar</a>
+        </div>
+        ${reviewHtml}
+      `;
+      if(btn) btn.textContent = '📎 Reemplazar archivo';
+    } else {
+      currentSubmission = null;
+      statusEl.innerHTML = '<p style="color:var(--ink-soft); font-size:0.85rem;">Todavía no has subido ningún archivo para este tema.</p>';
+      if(btn) btn.textContent = '📎 Elegir archivo PDF';
+    }
+  }catch(e){
+    console.error(e);
+    statusEl.innerHTML = '<p class="admin-empty">No se pudo cargar el estado de tu actividad.</p>';
+  }
+}
+
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handleSubmissionFileSelected(event){
+  const file = event.target.files[0];
+  event.target.value = '';
+  if(!file) return;
+
+  if(file.type !== 'application/pdf'){
+    alert('Por favor sube un archivo en formato PDF.');
+    return;
+  }
+  const MAX_BYTES = 700 * 1024; // ~700KB para no superar el límite de 1MB por documento en Firestore
+  if(file.size > MAX_BYTES){
+    alert('El archivo es muy grande (máximo 700 KB). Intenta escanear con menor calidad o comprimir el PDF antes de subirlo.');
+    return;
+  }
+
+  const progressEl = document.getElementById('submission-upload-progress');
+  progressEl.classList.remove('hidden');
+  progressEl.textContent = 'Subiendo archivo...';
+
+  try{
+    const base64 = await fileToBase64(file);
+    const topic = getTopic(activeTopicId);
+
+    await db.collection('submissions').doc(submissionDocId()).set({
+      uid: currentUser.uid,
+      topicId: activeTopicId,
+      topicTitle: topic.title,
+      studentName: currentUser.displayName,
+      username: currentUser.username,
+      fileName: file.name,
+      fileData: base64,
+      fileType: file.type,
+      fileSize: file.size,
+      uploadedAt: Date.now(),
+      reviewed: false,
+      grade: null,
+      teacherNote: '',
+      reviewedAt: null,
+    });
+
+    progressEl.textContent = '¡Archivo subido con éxito!';
+    setTimeout(() => progressEl.classList.add('hidden'), 2500);
+    renderSubmissionStatus();
+  }catch(e){
+    console.error(e);
+    progressEl.textContent = 'Hubo un error al subir el archivo. Intenta de nuevo.';
+  }
 }
 
 /* ---------------- Quizzes (per topic) ---------------- */
