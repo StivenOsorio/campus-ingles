@@ -468,6 +468,13 @@
     border: 1px solid var(--line); color: var(--ink-soft);
   }
   .admin-topic-chip.done{ background: var(--gold-pale); border-color: var(--gold); color: var(--wine-dark); font-weight:600; }
+  .admin-card-grades{ margin-top:14px; padding-top:14px; border-top:1px dashed var(--line); }
+  .admin-card-grades-label{ font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-soft); display:block; margin-bottom:8px; }
+  .admin-card-grades-list{ display:flex; gap:8px; flex-wrap:wrap; }
+  .admin-grade-chip{ font-size:0.78rem; padding:6px 12px; border-radius:20px; border:1px solid var(--line); color:var(--ink-soft); background:var(--paper); }
+  .admin-grade-chip.graded{ background: var(--gold-pale); border-color: var(--gold); color: var(--wine-dark); font-weight:600; }
+  .admin-final-grade{ margin-top:12px; padding-top:12px; border-top:1px solid var(--gold-pale); font-size:0.95rem; color:var(--wine-dark); font-weight:700; }
+  .admin-final-grade-detail{ font-weight:400; font-size:0.78rem; color:var(--ink-soft); margin-left:4px; }
   .admin-empty{ text-align:center; color: var(--ink-soft); padding: 30px 0; font-style:italic; font-family:'Cormorant Garamond', serif; }
 
   /* ---------- Syllabus ---------- */
@@ -659,7 +666,7 @@
             </div>
 
             <div class="card" style="margin-top:32px; max-width:520px; margin-left:auto; margin-right:auto;">
-              <h3 style="margin-top:0;">Actividad de práctica</h3>
+              <h3 style="margin-top:0;">Actividad 1 — Listening y verb be</h3>
               <p style="color:var(--ink-soft); font-size:0.9rem; margin-top:0;">Ejercicios de listening y gramática (verb be) para reforzar lo aprendido.</p>
               <a class="btn gold" href="Unit_1_Activity_1.pdf" target="_blank" rel="noopener" style="text-decoration:none; display:inline-block;">📄 Descargar Activity #1 (PDF)</a>
 
@@ -669,17 +676,34 @@
                 <source src="Unit_1_Audio_1_7.mp3" type="audio/mpeg">
                 Tu navegador no soporta audio HTML5. <a href="Unit_1_Audio_1_7.mp3">Descarga el audio aquí</a>.
               </audio>
+
+              <div class="submission-panel" style="margin-top:22px; padding-top:18px; border-top:1px dashed var(--line);">
+                <h3 style="margin:0 0 6px;">📤 Sube tu actividad</h3>
+                <p style="color:var(--ink-soft); font-size:0.9rem; margin-top:0;">Sube el PDF con tus respuestas de la Actividad 1 para que la profesora lo revise y te dé una nota.</p>
+                <div id="submission-status-1"></div>
+                <input type="file" id="submission-file-input-1" accept="application/pdf" style="display:none;" onchange="handleSubmissionFileSelected(event, '1', 'Actividad 1: Listening y verb be')">
+                <button class="btn gold" id="submission-upload-btn-1" onclick="document.getElementById('submission-file-input-1').click()" style="margin-top:10px;">📎 Elegir archivo PDF</button>
+                <div id="submission-upload-progress-1" class="hidden" style="margin-top:10px; font-size:0.85rem; color:var(--ink-soft);"></div>
+              </div>
             </div>
 
-            <div class="card" id="submission-card" style="margin-top:20px; max-width:520px; margin-left:auto; margin-right:auto;">
-              <h3 style="margin-top:0;">📤 Sube tu actividad</h3>
-              <p style="color:var(--ink-soft); font-size:0.9rem; margin-top:0;">Sube el PDF con tus respuestas del Activity #1 para que la profesora lo revise y te dé una nota.</p>
+            <div class="card" style="margin-top:20px; max-width:520px; margin-left:auto; margin-right:auto;">
+              <h3 style="margin-top:0;">Actividad 2 — Starting Out, Episode 1</h3>
+              <p style="color:var(--ink-soft); font-size:0.9rem; margin-top:0;">Mira el video "They meet" y completa los ejercicios de gramática (verb be) usando la transcripción como apoyo.</p>
+              <div style="display:flex; flex-direction:column; gap:10px; margin-top:14px;">
+                <a class="btn blue" href="https://learnenglish.britishcouncil.org/free-resources/general/video-series/starting-out/episode-01-they-meet" target="_blank" rel="noopener" style="text-decoration:none;">🎬 Ver el video (British Council)</a>
+                <a class="btn gold" href="Starting_Out_Episode1_Tasks.pdf" target="_blank" rel="noopener" style="text-decoration:none;">📄 Descargar ejercicios (PDF)</a>
+                <a class="btn gold" href="Starting_Out_Episode1_Transcript.pdf" target="_blank" rel="noopener" style="text-decoration:none;">📄 Descargar transcripción (PDF)</a>
+              </div>
 
-              <div id="submission-status"></div>
-
-              <input type="file" id="submission-file-input" accept="application/pdf" style="display:none;" onchange="handleSubmissionFileSelected(event)">
-              <button class="btn gold" id="submission-upload-btn" onclick="document.getElementById('submission-file-input').click()" style="margin-top:10px;">📎 Elegir archivo PDF</button>
-              <div id="submission-upload-progress" class="hidden" style="margin-top:10px; font-size:0.85rem; color:var(--ink-soft);"></div>
+              <div class="submission-panel" style="margin-top:22px; padding-top:18px; border-top:1px dashed var(--line);">
+                <h3 style="margin:0 0 6px;">📤 Sube tu actividad</h3>
+                <p style="color:var(--ink-soft); font-size:0.9rem; margin-top:0;">Sube el PDF con tus respuestas de la Actividad 2 para que la profesora lo revise y te dé una nota.</p>
+                <div id="submission-status-2"></div>
+                <input type="file" id="submission-file-input-2" accept="application/pdf" style="display:none;" onchange="handleSubmissionFileSelected(event, '2', 'Actividad 2: Starting Out – Episode 1')">
+                <button class="btn gold" id="submission-upload-btn-2" onclick="document.getElementById('submission-file-input-2').click()" style="margin-top:10px;">📎 Elegir archivo PDF</button>
+                <div id="submission-upload-progress-2" class="hidden" style="margin-top:10px; font-size:0.85rem; color:var(--ink-soft);"></div>
+              </div>
             </div>
           </div>
 
@@ -1400,6 +1424,19 @@ async function renderAdminDashboard(){
     return;
   }
 
+  // Cargar todas las actividades subidas de una sola vez, agrupadas por estudiante
+  let submissionsByUid = {};
+  try{
+    const subsSnap = await db.collection('submissions').get();
+    subsSnap.forEach(doc => {
+      const data = doc.data();
+      if(!submissionsByUid[data.uid]) submissionsByUid[data.uid] = [];
+      submissionsByUid[data.uid].push(data);
+    });
+  }catch(e){
+    console.error(e);
+  }
+
   wrap.innerHTML = '';
   for(const student of students){
     const progress = await loadProgress(student.uid);
@@ -1410,6 +1447,35 @@ async function renderAdminDashboard(){
       const doneCount = t.quizzes.filter(q => progress.completed.includes(q.id)).length;
       return `<span class="admin-topic-chip${complete ? ' done' : ''}">${complete ? '✓ ' : ''}Tema ${t.number}: ${doneCount}/${t.quizzes.length}</span>`;
     }).join('');
+
+    const subs = (submissionsByUid[student.uid] || []).sort((a,b) => (a.topicId || '').localeCompare(b.topicId || ''));
+    let gradesHtml = '';
+    if(subs.length > 0){
+      const gradeChips = subs.map(s => {
+        const hasGrade = s.grade !== null && s.grade !== undefined && s.grade !== '';
+        const label = hasGrade ? `Nota: ${s.grade}` : (s.reviewed ? 'Revisado (sin nota)' : '⏳ Sin calificar');
+        return `<span class="admin-grade-chip${hasGrade ? ' graded' : ''}" title="${s.fileName}">${s.topicTitle}${s.activityLabel ? ' (' + s.activityLabel.replace(/^Actividad \d+: /, '') + ')' : ''}: ${label}</span>`;
+      }).join('');
+      gradesHtml = `
+        <div class="admin-card-grades">
+          <span class="admin-card-grades-label">Actividades subidas</span>
+          <div class="admin-card-grades-list">${gradeChips}</div>
+        </div>`;
+    }
+
+    // Nota final = promedio de las notas numéricas de sus actividades calificadas
+    const numericGrades = subs
+      .filter(s => s.grade !== null && s.grade !== undefined && s.grade !== '' && !isNaN(parseFloat(s.grade)))
+      .map(s => parseFloat(s.grade));
+    let finalGradeHtml = '';
+    if(numericGrades.length > 0){
+      const avg = numericGrades.reduce((a,b) => a + b, 0) / numericGrades.length;
+      finalGradeHtml = `
+        <div class="admin-final-grade">
+          Nota final: ${avg.toFixed(1)}
+          <span class="admin-final-grade-detail">(promedio de ${numericGrades.length} actividad${numericGrades.length === 1 ? '' : 'es'} calificada${numericGrades.length === 1 ? '' : 's'})</span>
+        </div>`;
+    }
 
     const card = document.createElement('div');
     card.className = 'admin-card';
@@ -1422,6 +1488,8 @@ async function renderAdminDashboard(){
         <span class="topic-status ${doneTopics === TOPICS.length ? 'done-text' : 'progress-text'}">${doneTopics}/${TOPICS.length} temas completados</span>
       </div>
       <div class="admin-card-topics">${chipsHtml}</div>
+      ${gradesHtml}
+      ${finalGradeHtml}
     `;
     wrap.appendChild(card);
   }
@@ -1463,7 +1531,7 @@ async function renderAdminSubmissions(filterArg){
       <div class="admin-card-head">
         <div>
           <h3>${sub.studentName}</h3>
-          <span class="username-tag">@${sub.username} · ${sub.topicTitle}</span>
+          <span class="username-tag">@${sub.username} · ${sub.topicTitle}${sub.activityLabel ? ' · ' + sub.activityLabel : ''}</span>
         </div>
         <span class="topic-status ${sub.reviewed ? 'done-text' : 'progress-text'}">${sub.reviewed ? '✓ Revisado' : '⏳ Pendiente'}</span>
       </div>
@@ -1650,7 +1718,8 @@ async function openTopic(topicId){
   renderTopicMaterials();
   topicFlashIndex = 0;
   renderTopicFlashcard();
-  renderSubmissionStatus();
+  renderSubmissionStatus('1');
+  renderSubmissionStatus('2');
   topicCalViewDate = new Date();
   topicCalViewDate.setDate(1);
   renderTopicCalendar();
@@ -1668,31 +1737,29 @@ function showTopicSub(name){
 }
 
 /* ---------------- Student PDF submissions ---------------- */
-let currentSubmission = null;
-
-function submissionDocId(){
-  return currentUser.uid + '_' + activeTopicId;
+function submissionDocId(activityId){
+  return currentUser.uid + '_' + activeTopicId + '_' + activityId;
 }
 
-async function renderSubmissionStatus(){
-  const statusEl = document.getElementById('submission-status');
-  const btn = document.getElementById('submission-upload-btn');
+async function renderSubmissionStatus(activityId){
+  const statusEl = document.getElementById('submission-status-' + activityId);
+  const btn = document.getElementById('submission-upload-btn-' + activityId);
   if(!statusEl || !currentUser || !activeTopicId) return;
 
   statusEl.innerHTML = '<p style="color:var(--ink-soft); font-style:italic; font-size:0.85rem;">Cargando...</p>';
   try{
-    const doc = await db.collection('submissions').doc(submissionDocId()).get();
+    const doc = await db.collection('submissions').doc(submissionDocId(activityId)).get();
     if(doc.exists){
-      currentSubmission = doc.data();
-      const uploadDate = new Date(currentSubmission.uploadedAt).toLocaleString('es-CO', {dateStyle:'medium', timeStyle:'short'});
+      const sub = doc.data();
+      const uploadDate = new Date(sub.uploadedAt).toLocaleString('es-CO', {dateStyle:'medium', timeStyle:'short'});
 
       let reviewHtml = '';
-      if(currentSubmission.reviewed){
+      if(sub.reviewed){
         reviewHtml = `
           <div style="margin-top:12px; padding:12px; border-radius:10px; background:var(--gold-pale); border:1px solid var(--gold);">
             <strong style="color:var(--wine-dark);">✓ Revisado por la profesora</strong>
-            ${currentSubmission.grade !== null && currentSubmission.grade !== undefined && currentSubmission.grade !== '' ? `<div style="margin-top:4px;">Nota: <strong>${currentSubmission.grade}</strong></div>` : ''}
-            ${currentSubmission.teacherNote ? `<div style="margin-top:4px; font-style:italic; color:var(--ink-soft);">"${currentSubmission.teacherNote}"</div>` : ''}
+            ${sub.grade !== null && sub.grade !== undefined && sub.grade !== '' ? `<div style="margin-top:4px;">Nota: <strong>${sub.grade}</strong></div>` : ''}
+            ${sub.teacherNote ? `<div style="margin-top:4px; font-style:italic; color:var(--ink-soft);">"${sub.teacherNote}"</div>` : ''}
           </div>`;
       } else {
         reviewHtml = `<div style="margin-top:12px; font-size:0.85rem; color:var(--ink-soft);">⏳ Pendiente de revisión</div>`;
@@ -1700,16 +1767,15 @@ async function renderSubmissionStatus(){
 
       statusEl.innerHTML = `
         <div style="padding:12px; border-radius:10px; background:var(--cream); border:1px solid var(--gold-pale);">
-          <div>📄 <strong>${currentSubmission.fileName}</strong></div>
+          <div>📄 <strong>${sub.fileName}</strong></div>
           <div style="font-size:0.8rem; color:var(--ink-soft); margin-top:2px;">Subido el ${uploadDate}</div>
-          <a href="data:application/pdf;base64,${currentSubmission.fileData}" download="${currentSubmission.fileName}" class="btn ghost small" style="margin-top:8px; display:inline-block; text-decoration:none;">⬇ Ver / descargar</a>
+          <a href="data:application/pdf;base64,${sub.fileData}" download="${sub.fileName}" class="btn ghost small" style="margin-top:8px; display:inline-block; text-decoration:none;">⬇ Ver / descargar</a>
         </div>
         ${reviewHtml}
       `;
       if(btn) btn.textContent = '📎 Reemplazar archivo';
     } else {
-      currentSubmission = null;
-      statusEl.innerHTML = '<p style="color:var(--ink-soft); font-size:0.85rem;">Todavía no has subido ningún archivo para este tema.</p>';
+      statusEl.innerHTML = '<p style="color:var(--ink-soft); font-size:0.85rem;">Todavía no has subido ningún archivo para esta actividad.</p>';
       if(btn) btn.textContent = '📎 Elegir archivo PDF';
     }
   }catch(e){
@@ -1727,7 +1793,7 @@ function fileToBase64(file){
   });
 }
 
-async function handleSubmissionFileSelected(event){
+async function handleSubmissionFileSelected(event, activityId, activityLabel){
   const file = event.target.files[0];
   event.target.value = '';
   if(!file) return;
@@ -1742,7 +1808,7 @@ async function handleSubmissionFileSelected(event){
     return;
   }
 
-  const progressEl = document.getElementById('submission-upload-progress');
+  const progressEl = document.getElementById('submission-upload-progress-' + activityId);
   progressEl.classList.remove('hidden');
   progressEl.textContent = 'Subiendo archivo...';
 
@@ -1750,10 +1816,12 @@ async function handleSubmissionFileSelected(event){
     const base64 = await fileToBase64(file);
     const topic = getTopic(activeTopicId);
 
-    await db.collection('submissions').doc(submissionDocId()).set({
+    await db.collection('submissions').doc(submissionDocId(activityId)).set({
       uid: currentUser.uid,
       topicId: activeTopicId,
       topicTitle: topic.title,
+      activityId: activityId,
+      activityLabel: activityLabel,
       studentName: currentUser.displayName,
       username: currentUser.username,
       fileName: file.name,
@@ -1769,7 +1837,7 @@ async function handleSubmissionFileSelected(event){
 
     progressEl.textContent = '¡Archivo subido con éxito!';
     setTimeout(() => progressEl.classList.add('hidden'), 2500);
-    renderSubmissionStatus();
+    renderSubmissionStatus(activityId);
   }catch(e){
     console.error(e);
     progressEl.textContent = 'Hubo un error al subir el archivo. Intenta de nuevo.';
